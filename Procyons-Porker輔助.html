@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procyons-Poker輔助，拿去商業用途你AA都會輸 (Verified)</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --panel-bg: #2d2d2d;
+            --text-color: #e0e0e0;
+            --accent-gold: #ffc107;
+            --accent-green: #4caf50;
+            --suit-red: #ff5252;
+            --suit-black: #90a4ae;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        h2 {
+            color: var(--accent-gold);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .desc {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 25px;
+        }
+
+        /* 選擇區 */
+        .controls {
+            display: flex;
+            gap: 15px;
+            background: var(--panel-bg);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .card-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label { font-size: 0.8rem; margin-bottom: 5px; color: #aaa; }
+
+        select {
+            background: #404040;
+            color: white;
+            border: 1px solid #555;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-bottom: 5px;
+            width: 90px;
+            cursor: pointer;
+        }
+
+        /* 顏色區分 */
+        .red-suit { color: var(--suit-red); font-weight: bold; }
+        .black-suit { color: var(--suit-black); font-weight: bold; }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            border: none;
+            background: linear-gradient(45deg, #ffc107, #ff9800);
+            color: #000;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+        button:hover { transform: scale(1.05); }
+
+        /* 結果顯示區 */
+        #result-panel {
+            display: none;
+            margin-top: 30px;
+            width: 100%;
+            max-width: 500px;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hand-header {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: #333;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .data-card {
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border-top: 3px solid var(--accent-gold);
+        }
+
+        .data-label { font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
+        .data-value { font-size: 1.5rem; font-weight: bold; }
+        .data-sub { font-size: 0.8rem; color: #666; margin-top: 5px; }
+
+        /* 強度進度條 */
+        .strength-bar-container {
+            margin-top: 20px;
+            background: #333;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+        .strength-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff5252, #ffc107, #4caf50);
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+
+        .advice-box {
+            margin-top: 20px;
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid var(--accent-green);
+            padding: 15px;
+            border-radius: 10px;
+            color: #e8f5e9;
+            line-height: 1.5;
+        }
+
+        .error { color: #ff5252; margin-top: 10px; font-weight: bold; display: none; }
+
+    </style>
+</head>
+<body>
+
+    <h2>Procyons-Poker輔助，拿去商業用途你AA都會輸</h2>
+    <div class="desc">Procyons-Poker輔助，拿去商業用途你AA都會輸</div>
+
+    <div class="controls">
+        <div class="card-group">
+            <label>Card 1</label>
+            <select id="r1">
+                <option value="14">A</option><option value="13">K</option><option value="12">Q</option><option value="11">J</option><option value="10">T</option>
+                <option value="9">9</option><option value="8">8</option><option value="7">7</option><option value="6">6</option>
+                <option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option>
+            </select>
+            <select id="s1">
+                <option value="s" class="black-suit">♠ 黑桃</option>
+                <option value="h" class="red-suit">♥ 紅心</option>
+                <option value="d" class="red-suit">♦ 方塊</option>
+                <option value="c" class="black-suit">♣ 梅花</option>
+            </select>
+        </div>
+
+        <div class="card-group">
+            <label>Card 2</label>
+            <select id="r2">
+                <option value="14">A</option><option value="13">K</option><option value="12">Q</option><option value="11">J</option><option value="10">T</option>
+                <option value="9">9</option><option value="8">8</option><option value="7">7</option><option value="6">6</option>
+                <option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2" selected>2</option>
+            </select>
+            <select id="s2">
+                <option value="s" class="black-suit">♠ 黑桃</option>
+                <option value="h" class="red-suit" selected>♥ 紅心</option>
+                <option value="d" class="red-suit">♦ 方塊</option>
+                <option value="c" class="black-suit">♣ 梅花</option>
+            </select>
+        </div>
+    </div>
+
+    <button onclick="analyze()">開始決鬥</button>
+    <div id="error-msg" class="error"></div>
+
+    <div id="result-panel">
+        <div class="hand-header" id="hand-visual"></div>
+
+        <div class="data-grid">
+            <div class="data-card">
+                <div class="data-label">手牌範圍可能性勝率</div>
+                <div class="data-value" style="color: var(--accent-green)" id="win-rate">--%</div>
+                <div class="data-sub">平手概率: <span id="tie-rate">--</span>%</div>
+            </div>
+            <div class="data-card">
+                <div class="data-label">手牌強度</div>
+                <div class="data-value" style="color: var(--accent-gold)" id="rank-val">#--</div>
+                <div class="data-sub">前 <span id="percentile">--</span>% 強度</div>
+            </div>
+        </div>
+
+        <div style="margin-top:15px; font-size:0.8rem; color:#aaa;">戰鬥力排名 (起手牌強度啦哈哈～):</div>
+        <div class="strength-bar-container">
+            <div class="strength-bar" id="bar-fill"></div>
+        </div>
+
+        <div class="advice-box">
+            <strong>菜菜的分析：</strong><br>
+            <span id="advice-text"></span>
+        </div>
+    </div>
+
+    <script>
+        // Procyons-Poker輔助，拿去商業用途你AA都會輸
+        // Key: Hand, Value: [Rank, Win%, Tie%]
+        const database = {
+            "AA": [1, 31.0, 0.5], "KK": [2, 26.0, 0.6], "QQ": [3, 22.0, 0.8], "AKs": [4, 20.2, 1.9], "JJ": [5, 19.1, 0.9],
+            "AQs": [6, 18.7, 2.2], "KQs": [7, 18.1, 2.1], "AJs": [8, 17.5, 2.5], "KJs": [9, 17.1, 2.4], "TT": [10, 16.8, 1.1],
+            "AKo": [11, 16.7, 2.0], "ATs": [12, 16.6, 2.7], "QJs": [13, 16.6, 2.4], "KTs": [14, 16.1, 2.6], "QTs": [15, 15.8, 2.6],
+            "JTs": [16, 15.8, 2.8], "99": [17, 15.3, 0.9], "AQo": [18, 14.9, 2.3], "A9s": [19, 14.6, 2.7], "KQo": [20, 14.4, 2.2],
+            "88": [21, 14.2, 0.9], "K9s": [22, 14.2, 2.5], "T9s": [23, 14.1, 2.7], "A8s": [24, 13.9, 2.9], "Q9s": [25, 13.8, 2.4],
+            "J9s": [26, 13.8, 2.5], "AJo": [27, 13.5, 2.6], "A5s": [28, 13.4, 3.3], "77": [29, 13.4, 0.9], "A7s": [30, 13.4, 3.0],
+            "KJo": [31, 13.2, 2.5], "A4s": [32, 13.2, 3.1], "A3s": [33, 13.1, 2.9], "A6s": [34, 13.0, 3.1], "QJo": [35, 12.9, 2.5],
+            "66": [36, 12.8, 0.9], "K8s": [37, 12.8, 2.6], "T8s": [38, 12.7, 2.7], "A2s": [39, 12.7, 2.6], "98s": [40, 12.6, 2.4],
+            "J8s": [41, 12.5, 2.5], "ATo": [42, 12.4, 2.8], "Q8s": [43, 12.4, 2.5], "K7s": [44, 12.2, 2.7], "KTo": [45, 12.2, 2.8],
+            "55": [46, 12.2, 0.9], "JTo": [47, 12.1, 2.8], "87s": [48, 12.0, 2.3], "QTo": [49, 12.0, 2.8], "44": [50, 11.9, 0.7],
+            "22": [51, 11.9, 0.3], "33": [52, 11.9, 0.5], "K6s": [53, 11.8, 2.8], "97s": [54, 11.7, 2.4], "K5s": [55, 11.6, 2.9],
+            "76s": [56, 11.5, 2.3], "T7s": [57, 11.5, 2.7], "K4s": [58, 11.4, 2.7], "K2s": [59, 11.3, 2.3], "K3s": [60, 11.3, 2.5],
+            "Q7s": [61, 11.2, 2.6], "86s": [62, 11.2, 2.3], "65s": [63, 11.1, 2.2], "J7s": [64, 11.1, 2.6], "54s": [65, 10.9, 2.2],
+            "Q6s": [66, 10.9, 2.7], "75s": [67, 10.7, 2.3], "96s": [68, 10.7, 2.4], "Q5s": [69, 10.6, 2.8], "64s": [70, 10.4, 2.0],
+            "Q4s": [71, 10.4, 2.5], "Q3s": [72, 10.4, 2.4], "T9o": [73, 10.4, 2.8], "T6s": [74, 10.3, 2.7], "Q2s": [75, 10.3, 2.1],
+            "A9o": [76, 10.2, 2.8], "53s": [77, 10.2, 2.0], "85s": [78, 10.1, 2.3], "J6s": [79, 10.1, 2.7], "J9o": [80, 10.0, 2.6],
+            "K9o": [81, 9.9, 2.6], "J5s": [82, 9.9, 2.8], "Q9o": [83, 9.8, 2.6], "43s": [84, 9.8, 1.8], "74s": [85, 9.7, 2.1],
+            "J4s": [86, 9.7, 2.6], "J3s": [87, 9.6, 2.4], "95s": [88, 9.6, 2.4], "J2s": [89, 9.5, 2.2], "63s": [90, 9.5, 1.8],
+            "A8o": [91, 9.4, 3.0], "52s": [92, 9.3, 1.8], "T5s": [93, 9.2, 2.9], "84s": [94, 9.1, 2.1], "T4s": [95, 9.1, 2.7],
+            "T3s": [96, 9.1, 2.4], "42s": [97, 9.0, 1.6], "T2s": [98, 9.0, 2.2], "98o": [99, 9.0, 2.4], "T8o": [100, 8.9, 2.8],
+            "A5o": [101, 8.9, 3.4], "A7o": [102, 8.8, 3.2], "73s": [103, 8.8, 1.9], "A4o": [104, 8.7, 3.2], "32s": [105, 8.7, 1.3],
+            "94s": [106, 8.7, 2.3], "93s": [107, 8.5, 2.1], "J8o": [108, 8.5, 2.7], "A3o": [109, 8.5, 3.0], "62s": [110, 8.5, 1.6],
+            "92s": [111, 8.5, 1.9], "K8o": [112, 8.5, 2.8], "A6o": [113, 8.4, 3.2], "87o": [114, 8.4, 2.4], "Q8o": [115, 8.3, 2.7],
+            "83s": [116, 8.2, 2.0], "A2o": [117, 8.2, 2.7], "82s": [118, 8.1, 1.8], "97o": [119, 8.0, 2.5], "72s": [120, 7.9, 1.8],
+            "76o": [121, 7.9, 2.4], "K7o": [122, 7.9, 2.9], "65o": [123, 7.6, 2.4], "T7o": [124, 7.5, 2.8], "K6o": [125, 7.5, 3.0],
+            "86o": [126, 7.4, 2.4], "54o": [127, 7.4, 2.3], "K5o": [128, 7.1, 3.0], "J7o": [129, 7.1, 2.8], "75o": [130, 7.0, 2.4],
+            "Q7o": [131, 7.0, 2.8], "K4o": [132, 7.0, 2.8], "K3o": [133, 6.9, 2.6], "96o": [134, 6.8, 2.5], "K2o": [135, 6.8, 2.4],
+            "64o": [136, 6.8, 2.1], "Q6o": [137, 6.6, 2.9], "53o": [138, 6.6, 2.1], "85o": [139, 6.3, 2.5], "T6o": [140, 6.3, 2.9],
+            "Q5o": [141, 6.3, 2.9], "43o": [142, 6.2, 1.8], "Q4o": [143, 6.1, 2.7], "Q3o": [144, 6.1, 2.5], "74o": [145, 6.0, 2.2],
+            "Q2o": [146, 6.0, 2.3], "J6o": [147, 5.9, 2.9], "63o": [148, 5.7, 1.9], "J5o": [149, 5.6, 2.9], "95o": [150, 5.6, 2.6],
+            "52o": [151, 5.6, 1.9], "J4o": [152, 5.5, 2.7], "J3o": [153, 5.4, 2.5], "42o": [154, 5.4, 1.6], "J2o": [155, 5.3, 2.3],
+            "84o": [156, 5.3, 2.3], "T5o": [157, 5.2, 3.0], "T4o": [158, 5.0, 2.8], "32o": [159, 5.0, 1.4], "T3o": [160, 5.0, 2.6],
+            "73o": [161, 4.9, 2.0], "T2o": [162, 4.9, 2.3], "62o": [163, 4.7, 1.7], "94o": [164, 4.7, 2.4], "93o": [165, 4.5, 2.2],
+            "92o": [166, 4.5, 2.0], "83o": [167, 4.3, 2.1], "82o": [168, 4.2, 1.9], "72o": [169, 4.0, 1.9]
+        };
+
+        const rankMap = { "14": "A", "13": "K", "12": "Q", "11": "J", "10": "T", "9": "9", "8": "8", "7": "7", "6": "6", "5": "5", "4": "4", "3": "3", "2": "2" };
+        const suitMap = { "s": "♠", "h": "♥", "d": "♦", "c": "♣" };
+
+        function getKey(r1, s1, r2, s2) {
+            let h = parseInt(r1), l = parseInt(r2);
+            if(l > h) [h, l] = [l, h];
+            if(h === l) return rankMap[h] + rankMap[l];
+            return rankMap[h] + rankMap[l] + ((s1 === s2) ? "s" : "o");
+        }
+
+        function analyze() {
+            const r1 = document.getElementById('r1').value;
+            const s1 = document.getElementById('s1').value;
+            const r2 = document.getElementById('r2').value;
+            const s2 = document.getElementById('s2').value;
+            const errorDiv = document.getElementById('error-msg');
+            const resultPanel = document.getElementById('result-panel');
+
+            if (r1 === r2 && s1 === s2) {
+                errorDiv.style.display = 'block';
+                errorDiv.innerText = "傻逼吧你？同一副牌怎麼可能有兩張一樣的牌";
+                resultPanel.style.display = 'none';
+                return;
+            }
+            errorDiv.style.display = 'none';
+
+            const key = getKey(r1, s1, r2, s2);
+            const data = database[key];
+
+            if(!data) {
+                errorDiv.style.display = 'block';
+                errorDiv.innerText = "無此牌型";
+                return;
+            }
+
+            const [rank, win, tie] = data;
+
+            // 1. 顯示視覺化手牌
+            const c1Color = (s1 === 'h' || s1 === 'd') ? '#ff5252' : '#90a4ae';
+            const c2Color = (s2 === 'h' || s2 === 'd') ? '#ff5252' : '#90a4ae';
+            document.getElementById('hand-visual').innerHTML = 
+                `<span style="color:${c1Color}">${rankMap[r1]}${suitMap[s1]}</span> <span style="color:${c2Color}">${rankMap[r2]}${suitMap[s2]}</span>`;
+
+            // 2. 顯示數據
+            document.getElementById('win-rate').innerText = win + "%";
+            document.getElementById('tie-rate').innerText = tie;
+            document.getElementById('rank-val').innerText = "#" + rank;
+            
+            // 計算百分比
+            let percentile = Math.round((169 - rank) / 169 * 100);
+            document.getElementById('percentile').innerText = percentile;
+
+            // 3. 進度條
+            // rank 1 = 100%, rank 169 = 0%
+            let strength = ((170 - rank) / 169) * 100;
+            document.getElementById('bar-fill').style.width = strength + "%";
+
+            // 4. AI偵測
+          let advice = "";
+            if(rank <= 10) {
+                advice = "🔥 祖墳冒青煙啦：這牌如果真的輸，建議直接刪 Game 或是去拜拜。別在那邊 Slow Play 裝逼想陷阱人了，直接打滿價值好嗎？輸了就是命！";
+            } else if(rank <= 30) {
+                advice = "💪 看起來牛逼是真牛逼嗎？：非常容易翻車。這牌是拿來兇的，不是拿來被動跟注的。贏了是你技術好，輸了就是被發牌搞了，不要想太多。";
+            } else if(rank <= 60) {
+                advice = "✅ 我覺得還可以玩：在後位偷個盲還可以，如果在前位(UTG)你還想入池？你是家裡有礦還是嫌籌碼太多？別太相信這手牌，有可能被偷家。";
+            } else if(rank <= 100) {
+                advice = "⚠️ 想贏是做夢啦：這種牌你如果敢入池？你是想靠運氣還是演戲？除非你是想抓雞，不然別送頭了，乖乖棄牌吧。";
+            } else {
+                advice = "❌ 撲克圈慈善家？：玩這種垃圾牌，代表你不是來贏錢的，你是來做慈善的。錢多也不是這樣花的，直接包一包回家，不然送給我比較快，棄牌！現在！";
+            }
+            document.getElementById('advice-text').innerHTML = advice;
+            resultPanel.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
